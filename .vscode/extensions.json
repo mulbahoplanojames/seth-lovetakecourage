@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "solnurkarim.html-to-css-autocompletion"
+        "myml.vscode-markdown-plantuml-preview",
+        "esbenp.prettier-vscode",
+        "jebbs.plantuml"
     ]
 }
