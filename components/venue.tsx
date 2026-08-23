@@ -1,24 +1,50 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { weddingData } from "@/lib/wedding-data";
 
 export function Venue() {
   return (
-    <section id="venue" className="scroll-mt-24 px-6 py-28 sm:py-36 lg:px-10">
-      <div className="mx-auto mb-16 max-w-2xl text-center fade-up">
+    <section
+      id="venue"
+      className="scroll-mt-24 w-full px-6 py-36 sm:py-48 lg:py-56 flex flex-col items-center justify-center"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="mx-auto mb-16 max-w-2xl text-center flex flex-col items-center"
+      >
         <p className="text-[0.65rem] uppercase tracking-editorial text-[#7b6f66]">The Place</p>
-        <h2 className="mt-4 font-serif text-4xl uppercase tracking-[0.08em] sm:text-5xl lg:text-6xl">
+        <h2 className="mt-4 font-serif text-4xl uppercase tracking-[0.08em] sm:text-5xl lg:text-6xl text-[#2b2520]">
           Where it happens.
         </h2>
         <div className="mx-auto mt-8 h-px w-16 bg-foreground/30" />
-      </div>
+      </motion.div>
 
-      <p className="fade-up mx-auto max-w-xl text-center font-serif italic text-lg leading-relaxed text-[#7b6f66]">
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.15 }}
+        className="mx-auto max-w-xl text-center font-serif italic text-lg leading-relaxed text-[#7b6f66]"
+      >
         The celebration will take place at
-      </p>
+      </motion.p>
 
-      <div className="mx-auto mt-16 grid max-w-5xl items-stretch gap-8 lg:grid-cols-2 lg:gap-12">
+      {/* Centered Two-Column Grid */}
+      <div className="mx-auto mt-16 grid w-full max-w-5xl items-stretch gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Left Venue Details Card */}
-        <article className="fade-up flex flex-col items-center justify-center rounded-2xl border border-[#292420]/15 bg-white p-10 sm:p-14 text-center shadow-soft transition-all duration-500 hover:shadow-lift">
+        <motion.article
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          whileHover={{ y: -4 }}
+          className="flex flex-col items-center justify-center rounded-2xl border border-[#292420]/15 bg-white p-10 sm:p-14 text-center shadow-soft transition-all duration-500 hover:shadow-lift"
+        >
           {/* Decorative floral diamond motif */}
           <svg
             viewBox="0 0 48 48"
@@ -42,7 +68,7 @@ export function Venue() {
           <p className="text-[0.6rem] uppercase tracking-editorial text-[#7b6f66]">
             {weddingData.venue.type}
           </p>
-          <h3 className="mt-4 font-serif text-4xl uppercase tracking-[0.06em] sm:text-5xl">
+          <h3 className="mt-4 font-serif text-4xl uppercase tracking-[0.06em] sm:text-5xl text-[#2b2520]">
             {weddingData.venue.name}
           </h3>
           <p className="mt-3 font-serif text-lg italic text-[#7b6f66]">
@@ -52,11 +78,13 @@ export function Venue() {
             {weddingData.venue.address}
           </p>
 
-          <a
+          <motion.a
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
             href={weddingData.venue.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-10 inline-flex items-center gap-3 rounded-full border border-[#292420] bg-white px-8 py-3.5 text-[0.65rem] uppercase tracking-editorial text-[#292420] transition-all hover:bg-[#292420] hover:text-white"
+            className="mt-10 inline-flex items-center gap-3 rounded-full border border-[#292420] bg-white px-8 py-3.5 text-[0.65rem] uppercase tracking-editorial text-[#292420] transition-all hover:bg-[#292420] hover:text-white shadow-sm"
           >
             Open in Maps
             <svg
@@ -73,11 +101,17 @@ export function Venue() {
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
             </svg>
-          </a>
-        </article>
+          </motion.a>
+        </motion.article>
 
         {/* Right Venue Imagery */}
-        <figure className="fade-up overflow-hidden rounded-2xl shadow-soft relative min-h-[28rem]">
+        <motion.figure
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="overflow-hidden rounded-2xl shadow-soft relative min-h-[28rem]"
+        >
           <Image
             src={weddingData.venue.image}
             alt="Jalia Hall wedding venue"
@@ -85,7 +119,7 @@ export function Venue() {
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover transition-transform duration-700 hover:scale-105"
           />
-        </figure>
+        </motion.figure>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { weddingData } from "@/lib/wedding-data";
 
 interface ScratchCircleProps {
@@ -131,7 +132,6 @@ function ScratchCircle({ value, label, onComplete }: ScratchCircleProps) {
         animateClear(canvas, ctx);
       }
     } catch {
-      // In case of any cross-origin/canvas read restriction, trigger reveal
       hasTriggered.current = true;
       setIsRevealed(true);
       onCompleteRef.current();
@@ -162,20 +162,23 @@ function ScratchCircle({ value, label, onComplete }: ScratchCircleProps) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <motion.div
+      whileHover={{ scale: 1.03 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col items-center gap-4"
+    >
       <div
-        className={`relative overflow-hidden rounded-full border border-border bg-background transition-all duration-700 select-none ${
-          isRevealed ? "shadow-lift ring-2 ring-[#745f39]/20" : "shadow-soft"
-        }`}
+        className={`relative overflow-hidden rounded-full border border-border bg-background transition-all duration-700 select-none ${isRevealed ? "shadow-lift ring-2 ring-[#745f39]/20" : "shadow-soft"
+          }`}
         style={{
-          width: "clamp(88px, 18vw, 140px)",
-          height: "clamp(88px, 18vw, 140px)",
+          width: "clamp(96px, 20vw, 150px)",
+          height: "clamp(96px, 20vw, 150px)",
         }}
       >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <span
             className="font-serif italic text-foreground"
-            style={{ fontSize: "clamp(2rem, 7vw, 3.8rem)" }}
+            style={{ fontSize: "clamp(2.2rem, 7.5vw, 4rem)" }}
           >
             {value}
           </span>
@@ -214,8 +217,8 @@ function ScratchCircle({ value, label, onComplete }: ScratchCircleProps) {
           />
         )}
       </div>
-      <p className="text-[0.6rem] uppercase tracking-editorial text-[#7b6f66]">{label}</p>
-    </div>
+      <p className="text-[0.65rem] uppercase tracking-editorial text-[#7b6f66] font-medium">{label}</p>
+    </motion.div>
   );
 }
 
@@ -244,7 +247,7 @@ function ConfettiCanvas({ active }: { active: boolean }) {
     window.addEventListener("resize", handleResize);
 
     const colors = ["#ccb89c", "#805f44", "#eedbc1", "#6a704c", "#5d250f", "#fdfaf4"];
-    const particles = Array.from({ length: 65 }, () => ({
+    const particles = Array.from({ length: 75 }, () => ({
       x: Math.random() * width,
       y: -20 - Math.random() * 80,
       vx: (Math.random() - 0.5) * 2.5,
@@ -315,12 +318,23 @@ export function ScratchReveal() {
   }, []);
 
   return (
-    <section id="date-reveal" className="scroll-mt-24 px-6 py-28 text-center sm:py-36 lg:px-10">
+    <section
+      id="date-reveal"
+      className="scroll-mt-24 w-full px-6 py-36 text-center sm:py-48 lg:py-56 flex flex-col items-center justify-center"
+    >
       <ConfettiCanvas active={isAllRevealed} />
 
-      <div className="fade-up mx-auto max-w-2xl">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="mx-auto w-full max-w-2xl flex flex-col items-center text-center"
+      >
         <p className="text-[0.65rem] uppercase tracking-editorial text-[#7b6f66]">Reveal</p>
-        <h2 className="mt-4 font-serif text-4xl italic sm:text-5xl lg:text-6xl">Our date</h2>
+        <h2 className="mt-4 font-serif text-4xl italic sm:text-5xl lg:text-6xl text-[#2b2520]">
+          Our date
+        </h2>
         <div className="mt-8 flex items-center justify-center gap-5">
           <span className="h-px w-20 bg-[#745f39]/40" />
           <svg viewBox="0 0 12 12" className="h-2.5 w-2.5 text-[#745f39]/60" fill="currentColor" aria-hidden="true">
@@ -328,30 +342,42 @@ export function ScratchReveal() {
           </svg>
           <span className="h-px w-20 bg-[#745f39]/40" />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="fade-up mt-16 flex items-end justify-center gap-5 sm:gap-10 lg:gap-14">
+      {/* Centered Scratch Cards Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        className="mt-20 flex w-full items-end justify-center gap-6 sm:gap-12 lg:gap-16"
+      >
         <ScratchCircle value={weddingData.eventDate.day} label="Day" onComplete={handleComplete} />
         <ScratchCircle value={weddingData.eventDate.month} label="Month" onComplete={handleComplete} />
         <ScratchCircle value={weddingData.eventDate.year} label="Year" onComplete={handleComplete} />
-      </div>
+      </motion.div>
 
-      <div
-        className={`mt-16 transition-all duration-1000 ${
-          isAllRevealed
-            ? "translate-y-0 opacity-100"
-            : "pointer-events-none translate-y-6 opacity-0"
-        }`}
-      >
-        <p className="font-serif text-2xl italic sm:text-3xl text-[#18140b]">
-          Date revealed
-          <br />
-          <span className="text-lg sm:text-xl text-[#7b6f66] mt-2 block font-sans not-italic">
-            Scroll down and let the fun begin.
-          </span>
-        </p>
-        <div className="mx-auto mt-5 h-px w-12 bg-[#c4a0a8]/40" />
-      </div>
+      {/* Date Revealed message */}
+      <AnimatePresence>
+        {isAllRevealed && (
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-20 flex flex-col items-center text-center"
+          >
+            <p className="font-serif text-2xl italic sm:text-3xl text-[#18140b]">
+              Date revealed
+              <br />
+              <span className="text-lg sm:text-xl text-[#7b6f66] mt-3 block font-sans not-italic font-light">
+                Scroll down and let the fun begin.
+              </span>
+            </p>
+            <div className="mx-auto mt-6 h-px w-16 bg-[#c4a0a8]/40" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

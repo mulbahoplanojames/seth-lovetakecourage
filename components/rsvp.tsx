@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { weddingData } from "@/lib/wedding-data";
 
 export function Rsvp() {
@@ -59,24 +60,53 @@ export function Rsvp() {
   };
 
   return (
-    <section id="rsvp" className="scroll-mt-24 px-6 py-28 sm:py-36 lg:px-10 bg-[#f4ece1]/40">
-      <div className="mx-auto mb-16 max-w-2xl text-center fade-up">
+    <section
+      id="rsvp"
+      className="scroll-mt-24 w-full px-6 py-36 sm:py-48 lg:py-56 bg-[#f4ece1]/40 flex flex-col items-center justify-center"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="mx-auto mb-16 max-w-2xl text-center flex flex-col items-center"
+      >
         <p className="text-[0.65rem] uppercase tracking-editorial text-[#7b6f66]">Kindly Reply</p>
-        <h2 className="mt-4 font-serif text-4xl uppercase tracking-[0.08em] sm:text-5xl lg:text-6xl">
+        <h2 className="mt-4 font-serif text-4xl uppercase tracking-[0.08em] sm:text-5xl lg:text-6xl text-[#2b2520]">
           RSVP
         </h2>
         <div className="mx-auto mt-8 h-px w-16 bg-foreground/30" />
-      </div>
+      </motion.div>
 
-      <div className="mx-auto max-w-2xl">
-        <p className="text-center font-serif text-lg italic leading-relaxed text-[#7b6f66]">
+      <div className="mx-auto w-full max-w-2xl flex flex-col items-center">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center font-serif text-lg italic leading-relaxed text-[#7b6f66]"
+        >
           We cannot wait to celebrate with you.
-        </p>
-        <p className="mt-3 text-center text-sm leading-relaxed text-[#7b6f66]">
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="mt-3 text-center text-sm leading-relaxed text-[#7b6f66]"
+        >
           Please respond by {weddingData.rsvp.deadline}.
-        </p>
+        </motion.p>
 
-        <form onSubmit={handleSubmit} className="fade-up mt-12 space-y-10" noValidate>
+        <motion.form
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 w-full space-y-12"
+          noValidate
+        >
           {/* Honeypot field for bot protection */}
           <div className="absolute -left-[9999px]" aria-hidden="true">
             <label htmlFor="website">Website</label>
@@ -92,8 +122,8 @@ export function Rsvp() {
           </div>
 
           {/* Full Name */}
-          <div className="rsvp-field group">
-            <label htmlFor="name" className="rsvp-field__label">
+          <div className="relative group">
+            <label htmlFor="name" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
               Full Name<span className="sr-only"> (required)</span>
             </label>
             <input
@@ -105,13 +135,13 @@ export function Rsvp() {
               placeholder="e.g. Astride Umutesi"
               value={formData.name}
               onChange={handleChange}
-              className="rsvp-input"
+              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
             />
           </div>
 
           {/* Email Address */}
-          <div className="rsvp-field group">
-            <label htmlFor="email" className="rsvp-field__label">
+          <div className="relative group">
+            <label htmlFor="email" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
               Email Address<span className="sr-only"> (required)</span>
             </label>
             <input
@@ -123,13 +153,13 @@ export function Rsvp() {
               placeholder="e.g. name@domain.com"
               value={formData.email}
               onChange={handleChange}
-              className="rsvp-input"
+              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
             />
           </div>
 
           {/* Phone Number */}
-          <div className="rsvp-field group">
-            <label htmlFor="phone" className="rsvp-field__label">
+          <div className="relative group">
+            <label htmlFor="phone" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
               Phone Number (optional)
             </label>
             <input
@@ -140,14 +170,14 @@ export function Rsvp() {
               placeholder="+250 ..."
               value={formData.phone}
               onChange={handleChange}
-              className="rsvp-input"
+              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
             />
           </div>
 
           {/* Attendance */}
           <div className="grid gap-10 sm:grid-cols-2">
-            <div className="rsvp-field group">
-              <label htmlFor="attending" className="rsvp-field__label">
+            <div className="relative group">
+              <label htmlFor="attending" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
                 Attendance<span className="sr-only"> (required)</span>
               </label>
               <select
@@ -156,7 +186,13 @@ export function Rsvp() {
                 required
                 value={formData.attending}
                 onChange={handleChange}
-                className="rsvp-input rsvp-select"
+                className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] cursor-pointer appearance-none"
+                style={{
+                  backgroundImage: 'linear-gradient(45deg, transparent 50%, var(--taupe) 50%), linear-gradient(135deg, var(--taupe) 50%, transparent 50%)',
+                  backgroundPosition: 'calc(100% - 18px) calc(50% + 2px), calc(100% - 12px) calc(50% + 2px)',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '6px 6px, 6px 6px'
+                }}
               >
                 <option value="" disabled>
                   Select…
@@ -168,8 +204,8 @@ export function Rsvp() {
           </div>
 
           {/* Message to Couple */}
-          <div className="rsvp-field group">
-            <label htmlFor="message" className="rsvp-field__label">
+          <div className="relative group">
+            <label htmlFor="message" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
               A Message to the Couple
             </label>
             <textarea
@@ -179,24 +215,26 @@ export function Rsvp() {
               placeholder={weddingData.rsvp.messagePrompt}
               value={formData.message}
               onChange={handleChange}
-              className="rsvp-input rsvp-textarea"
+              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] resize-y min-h-[5rem] leading-[1.7]"
             />
           </div>
 
           {status === "error" && (
-            <p className="rsvp-field__error text-center">{errorMessage}</p>
+            <p className="text-center">{errorMessage}</p>
           )}
 
           {/* Submit CTA */}
-          <div className="pt-4 text-center">
-            <button
+          <div className="pt-6 text-center">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={status === "submitting"}
-              className="rsvp-submit group inline-flex items-center gap-4 disabled:opacity-60"
+              className="border border-[#2b2520] tracking-[0.32em] uppercase text-[#2b2520] cursor-pointer bg-transparent px-10 py-4 text-[0.7rem] transition-background-color duration-[450ms] ease-out transition-color duration-[450ms] ease-out transition-opacity duration-[350ms] ease-out group inline-flex items-center gap-4 disabled:opacity-60 hover:bg-[#2b2520] hover:text-[#fdfaf4]"
             >
               {status === "submitting" ? (
                 <>
-                  <span className="rsvp-spinner" />
+                  <span className="border border-current border-r-transparent rounded-full w-[0.85rem] h-[0.85rem] animate-[rsvp-spin_0.8s_linear_infinite] inline-block" />
                   <span>Sending…</span>
                 </>
               ) : (
@@ -205,35 +243,50 @@ export function Rsvp() {
                   <span className="block h-px w-6 bg-current transition-all duration-300 group-hover:w-10" />
                 </>
               )}
-            </button>
+            </motion.button>
           </div>
-        </form>
+        </motion.form>
       </div>
 
-      {/* Success Modal Confirmation */}
-      {status === "success" && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#292420]/40 backdrop-blur-sm p-6"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="w-full max-w-md rounded-xl bg-[#fdfaf4] p-10 text-center shadow-2xl border border-border">
-            <h3 className="font-serif text-3xl text-foreground">Thank You</h3>
-            <p className="mt-4 font-serif text-lg italic text-[#7b6f66] leading-relaxed">
-              {formData.attending === "yes"
-                ? "We look forward to celebrating with you!"
-                : "Thank you for letting us know. You will be missed dearly."}
-            </p>
-            <button
-              type="button"
+      {/* Success Modal Confirmation via Framer Motion */}
+      <AnimatePresence>
+        {status === "success" && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-6"
+            role="dialog"
+            aria-modal="true"
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-[#292420]/40 backdrop-blur-sm"
               onClick={resetForm}
-              className="mt-8 inline-flex items-center justify-center border border-foreground px-8 py-3 text-[0.65rem] uppercase tracking-editorial text-foreground hover:bg-foreground hover:text-background transition-colors"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-md rounded-xl bg-[#fdfaf4] p-10 text-center shadow-2xl border border-border"
             >
-              Close
-            </button>
+              <h3 className="font-serif text-3xl text-foreground">Thank You</h3>
+              <p className="mt-4 font-serif text-lg italic text-[#7b6f66] leading-relaxed">
+                {formData.attending === "yes"
+                  ? "We look forward to celebrating with you!"
+                  : "Thank you for letting us know. You will be missed dearly."}
+              </p>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="mt-8 inline-flex items-center justify-center border border-foreground px-8 py-3 text-[0.65rem] uppercase tracking-editorial text-foreground hover:bg-foreground hover:text-background transition-colors rounded-sm"
+              >
+                Close
+              </button>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </section>
   );
 }

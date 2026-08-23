@@ -1,3 +1,6 @@
+
+
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -48,11 +51,10 @@ export function Navigation() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-[#fdfaf4]/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.03)] py-3.5"
-          : "bg-transparent py-5"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${isScrolled
+        ? "bg-[#fdfaf4]/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.03)] py-6.5"
+        : "bg-transparent py-6.5"
+        }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10">
         <a
@@ -79,9 +81,8 @@ export function Navigation() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className={`relative py-2 transition-colors hover:text-foreground after:absolute after:bottom-0 after:left-1/2 after:h-px after:-translate-x-1/2 after:bg-foreground after:transition-all ${
-                      isActive ? "text-foreground after:w-full" : "after:w-0 hover:after:w-full"
-                    }`}
+                    className={`relative py-2 transition-colors hover:text-foreground after:absolute after:bottom-0 after:left-1/2 after:h-px after:-translate-x-1/2 after:bg-foreground after:transition-all ${isActive ? "text-foreground after:w-full" : "after:w-0 hover:after:w-full"
+                      }`}
                   >
                     {link.label}
                   </a>
@@ -99,23 +100,20 @@ export function Navigation() {
           className="lg:hidden flex h-9 w-9 flex-col items-center justify-center gap-1.5 focus:outline-none"
         >
           <span
-            className={`block h-px w-5 bg-foreground transition-all duration-300 ${
-              mobileMenuOpen ? "translate-y-[4px] rotate-45" : ""
-            }`}
+            className={`block h-px w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? "translate-y-[4px] rotate-45" : ""
+              }`}
           />
           <span
-            className={`block h-px w-5 bg-foreground transition-all duration-300 ${
-              mobileMenuOpen ? "-translate-y-[3px] -rotate-45" : ""
-            }`}
+            className={`block h-px w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? "-translate-y-[3px] -rotate-45" : ""
+              }`}
           />
         </button>
       </div>
 
       {/* Mobile dropdown drawer */}
       <div
-        className={`lg:hidden overflow-hidden bg-[#fdfaf4]/95 backdrop-blur-md transition-[max-height] duration-500 ease-in-out ${
-          mobileMenuOpen ? "max-h-96 border-b border-border/60 shadow-lg" : "max-h-0"
-        }`}
+        className={`lg:hidden overflow-hidden bg-[#fdfaf4]/95 backdrop-blur-md transition-[max-height] duration-500 ease-in-out ${mobileMenuOpen ? "max-h-96 border-b border-border/60 shadow-lg" : "max-h-0"
+          }`}
       >
         <ul className="flex flex-col px-6 py-4 text-[0.78rem] uppercase tracking-wide-sm">
           {navLinks.map((link) => (
