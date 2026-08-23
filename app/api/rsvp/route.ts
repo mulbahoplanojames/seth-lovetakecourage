@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { createObjectCsvWriter } from "csv-writer";
-import path from "path";
-import fs from "fs";
 import { weddingData } from "@/lib/wedding-data";
 import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
 
-// Email configuration - should be moved to environment variables
+// Email configuration
 const EMAIL_CONFIG = {
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: parseInt(process.env.SMTP_PORT || "587"),
@@ -20,37 +17,6 @@ const EMAIL_CONFIG = {
   },
   from: process.env.FROM_EMAIL || "wedding@example.com",
   organizerEmail: process.env.ORGANIZER_EMAIL || "organizer@example.com",
-};
-
-// CSV file path
-const CSV_PATH = path.join(process.cwd(), "data", "rsvp_responses.csv");
-
-// Ensure data directory exists
-const ensureDataDir = () => {
-  const dataDir = path.join(process.cwd(), "data");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-};
-
-// Initialize CSV file with headers if it doesn't exist
-const initializeCsvFile = async () => {
-  ensureDataDir();
-  if (!fs.existsSync(CSV_PATH)) {
-    const csvWriter = createObjectCsvWriter({
-      path: CSV_PATH,
-      header: [
-        { id: "id", title: "ID" },
-        { id: "name", title: "Name" },
-        { id: "email", title: "Email" },
-        { id: "phone", title: "Phone" },
-        { id: "attending", title: "Attending" },
-        { id: "message", title: "Message" },
-        { id: "submittedAt", title: "Submitted At" },
-      ],
-    });
-    await csvWriter.writeRecords([]);
-  }
 };
 
 // Create email transporter
@@ -199,15 +165,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize CSV file
-    await initializeCsvFile();
-
-    // Generate unique ID
-    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
     // Prepare data
     const rsvpData = {
-      id,
       name,
       email,
       phone: phone || "",
@@ -215,24 +174,6 @@ export async function POST(request: NextRequest) {
       message: message || "",
       submittedAt: new Date().toISOString(),
     };
-
-    // Append to CSV
-    const csvWriter = createObjectCsvWriter({
-      path: CSV_PATH,
-      header: [
-        { id: "id", title: "ID" },
-        { id: "name", title: "Name" },
-        { id: "email", title: "Email" },
-        { id: "phone", title: "Phone" },
-        { id: "attending", title: "Attending" },
-        { id: "message", title: "Message" },
-        { id: "submittedAt", title: "Submitted At" },
-      ],
-      append: true,
-    });
-
-    await csvWriter.writeRecords([rsvpData]);
-    // console.log("CSV record saved successfully");
 
     // Send emails
     try {
@@ -269,9 +210,10 @@ export async function POST(request: NextRequest) {
       // console.log("Guest email sent successfully:", guestResult.messageId);
     } catch (emailError) {
       console.error("Email sending error:", emailError);
-      // Return success even if email fails (data is saved to CSV)
-      // In production, you might want to handle this differently
-      // console.warn("RSVP saved to CSV but email failed");
+      return NextResponse.json(
+        { error: "Failed to send emails. Please try again." },
+        { status: 500 }
+      );
     }
 
     // console.log("=== RSVP Submission Completed ===");

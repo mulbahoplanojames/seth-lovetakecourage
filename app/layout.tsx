@@ -38,7 +38,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lovetakesnyiawumuntu.com"),
+  metadataBase: new URL("https://nyiawumuntuseth.vercel.app"),
   title: "NYIAWUMUNTU & Seth | Wedding",
   description:
     "Join NYIAWUMUNTU & Seth for a weekend of celebration in Kigali, Rwanda — schedule, travel, registry, and RSVP.",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     title: "NYIAWUMUNTU & Seth · A Kigali Wedding",
     description: "October 24, 2026 — celebrate with us at Jalia Hall.",
     type: "website",
-    url: "https://lovetakesnyiawumuntu.com",
+    url: "https://nyiawumuntuseth.vercel.app",
     images: [
       {
         url: "/assets/hero-couple-D5jhPesi.jpg",

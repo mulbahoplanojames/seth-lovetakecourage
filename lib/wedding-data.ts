@@ -233,7 +233,7 @@ export const weddingData: WeddingConfig = {
     city: "Kabuga, Kigali, Rwanda",
     address: "KG 107 St, Kabuga, Gasabo District",
     mapsUrl: "https://maps.app.goo.gl/bxf3Zb5aLi1airdKA",
-    image: "/assets/venue-CaDag57q.jpg",
+    image: "/assets/venues/venue-1.jpeg",
   },
   registry: {
     intro:

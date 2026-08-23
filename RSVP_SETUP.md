@@ -1,6 +1,6 @@
 # RSVP System Setup Guide
 
-This RSVP system includes email notifications, CSV data persistence, and automated reminder emails.
+This RSVP system includes email notifications with email-only data persistence.
 
 ## Features
 
@@ -9,16 +9,11 @@ This RSVP system includes email notifications, CSV data persistence, and automat
    - Sends confirmation email to the guest with wedding details
    - Clean HTML email templates for both emails
 
-2. **Data Persistence**
-   - Automatically appends RSVP submissions to `data/rsvp_responses.csv`
-   - Handles concurrent submissions safely
-   - Includes all form fields with timestamp
-
-3. **Automated Recurring Reminders**
-   - Background cron job sends reminder emails every 5 days
-   - Reminders sent to confirmed attendees only
-   - Automatically stops after wedding date passes
-   - Runs at 9:00 AM (Africa/Kigali timezone)
+2. **Email-Only Data Persistence**
+   - All RSVP data is stored in your email inbox
+   - No database or file system required
+   - Works perfectly on Vercel and other serverless platforms
+   - Easy to export emails to CSV/Excel
 
 ## Setup Instructions
 
@@ -56,35 +51,18 @@ pnpm install
 
 Required packages:
 - `nodemailer` - Email sending
-- `node-cron` - Scheduled tasks
-- `csv-writer` - CSV file writing
-- `csv-parse` - CSV file reading
+- `dotenv` - Environment variable loading
 
-### 3. Data Directory
+### 3. Vercel Deployment
 
-The system automatically creates a `data/` directory and `rsvp_responses.csv` file on first submission.
+Add the same environment variables to your Vercel project:
 
-### 4. Running the Reminder Server
+1. Go to your Vercel project settings
+2. Navigate to Environment Variables
+3. Add all variables from your `.env.local` file
+4. Redeploy your application
 
-The reminder cron job runs as a separate process:
-
-```bash
-pnpm reminders
-```
-
-This starts a long-running process that:
-- Sends reminder emails every 5 days at 9:00 AM
-- Automatically stops after the wedding date
-- Requires the server to stay running
-
-**Production Deployment:**
-For production, deploy the reminder server to a platform that supports long-running processes:
-- VPS (DigitalOcean, Linode, etc.)
-- Render (Background Worker)
-- Railway (Background Worker)
-- AWS ECS with Fargate
-
-### 5. Testing
+### 4. Testing
 
 To test the RSVP system:
 
@@ -96,25 +74,21 @@ To test the RSVP system:
 2. Navigate to the RSVP section and submit a test form
 
 3. Check:
-   - `data/rsvp_responses.csv` for the new entry
-   - Your email for the confirmation email
-   - The organizer email for the notification
+   - Your email for the organizer notification
+   - The guest email for the confirmation
 
-### 6. Testing Reminders
+### 5. Test Email Configuration
 
-To test reminders without waiting 5 days:
+Run the email test script:
 
-Edit `lib/cron-reminders.ts` and change the cron schedule:
-
-```typescript
-// Temporary: Run every minute for testing
-const task = cron.schedule("* * * * *", sendReminders, {
-  scheduled: true,
-  timezone: "Africa/Kigali",
-});
+```bash
+pnpm test-email
 ```
 
-**Remember to revert this change after testing!**
+This will:
+- Test your SMTP connection
+- Send a test email to your organizer email
+- Show detailed error messages if something fails
 
 ## API Endpoint
 
@@ -130,7 +104,7 @@ Submits an RSVP and triggers email notifications.
   "phone": "+250 788 123 456",
   "attending": "yes",
   "message": "Looking forward to the celebration!",
-  "website": "" // Honeypot field - should be empty
+  "confirm_email": "" // Honeypot field - should be empty
 }
 ```
 
@@ -141,20 +115,6 @@ Submits an RSVP and triggers email notifications.
   "message": "RSVP submitted successfully"
 }
 ```
-
-## CSV Data Format
-
-The CSV file (`data/rsvp_responses.csv`) contains:
-
-| Column | Description |
-|--------|-------------|
-| ID | Unique identifier (timestamp-random) |
-| Name | Guest name |
-| Email | Guest email |
-| Phone | Guest phone number |
-| Attending | "yes" or "no" |
-| Message | Optional message from guest |
-| Submitted At | ISO timestamp of submission |
 
 ## Email Templates
 
@@ -170,63 +130,94 @@ The CSV file (`data/rsvp_responses.csv`) contains:
 - Includes couple names and hashtag
 - Professional wedding-themed styling
 
-### Reminder Email
-- Countdown of days remaining
-- Wedding date and venue details
-- Friendly reminder message
-- Sent every 5 days to confirmed guests
+## Data Management
+
+Since this is an email-only solution:
+
+### Storage
+- All RSVP data is stored in your email inbox
+- Organizer receives a notification for each RSVP
+- Guest receives a confirmation email
+
+### Export to CSV/Excel
+- Use your email client's export feature
+- Filter emails by subject or sender
+- Export to CSV/Excel format
+- Import into other systems if needed
+
+### Organization Tips
+- Create a folder/label for RSVP emails
+- Use email filters to auto-organize
+- Search by guest name or email
+- Archive old RSVPs after the wedding
 
 ## Troubleshooting
 
 ### Emails not sending
-- Check SMTP credentials in `.env.local`
+- Check SMTP credentials in `.env.local` and Vercel
 - For Gmail, ensure you're using an App Password
 - Check firewall/network settings
 - Verify SMTP port (587 for TLS, 465 for SSL)
+- Check Vercel logs for error messages
 
-### CSV file not created
-- Ensure the `data/` directory is writable
-- Check file system permissions
-- The file is created on first successful submission
+### Gmail App Password Issues
+- Go to https://myaccount.google.com/apppasswords
+- Create a new App Password named "Wedding RSVP"
+- Use that 16-character password in your `.env` file
+- Make sure 2FA is enabled on your Google account
 
-### Reminders not running
-- Ensure the reminder server is running (`pnpm reminders`)
-- Check the cron schedule in `lib/cron-reminders.ts`
-- Verify timezone settings
-- Check that the wedding date hasn't passed
-
-### Port conflicts
-- The reminder server doesn't use a port (it's a background process)
-- Only the Next.js dev server uses a port (default: 3000)
+### Vercel deployment issues
+- Ensure all environment variables are set in Vercel
+- Check Vercel logs for runtime errors
+- Verify SMTP configuration is correct
+- Test with production credentials
 
 ## Security Notes
 
 1. **Never commit `.env.local`** - It contains sensitive email credentials
 2. **Use App Passwords** - For Gmail, never use your regular password
-3. **Honeypot Protection** - The `website` field helps prevent spam
+3. **Honeypot Protection** - The `confirm_email` field helps prevent spam
 4. **Rate Limiting** - Consider adding rate limiting in production
 5. **Email Validation** - Consider additional email validation
 
 ## Production Checklist
 
 - [ ] Set up production SMTP credentials
-- [ ] Configure environment variables on hosting platform
-- [ ] Deploy reminder server to long-running process host
+- [ ] Configure environment variables on Vercel
 - [ ] Test email delivery with production credentials
-- [ ] Set up monitoring for reminder server
-- [ ] Implement error logging (e.g., Sentry)
+- [ ] Monitor Vercel logs for errors
 - [ ] Add rate limiting to API endpoint
-- [ ] Configure backup for CSV data
-- [ ] Test cron job execution
-- [ ] Verify timezone settings
+- [ ] Create email filters for RSVP organization
+- [ ] Test RSVP form in production
 
-## Alternative: Database Storage
+## Benefits of Email-Only Solution
 
-If you prefer a database over CSV:
+- ✅ Works on Vercel (no file system issues)
+- ✅ No database setup required
+- ✅ Free to use
+- ✅ Easy to maintain
+- ✅ Built-in backup (email provider)
+- ✅ Built-in search and organization
+- ✅ No additional infrastructure costs
+- ✅ Perfect for small to medium weddings
 
-1. Install a database (PostgreSQL, MySQL, MongoDB)
-2. Replace CSV operations with database queries
-3. Update the API endpoint to use database
-4. Update reminder cron to read from database
+## Manual Reminders
 
-The current CSV solution is simple and requires no additional infrastructure.
+Since automated reminders are disabled in email-only mode:
+
+1. Review RSVP emails in your inbox
+2. Create a list of confirmed guests
+3. Send manual follow-up emails as needed
+4. Use email filters to organize RSVPs by date
+
+## Future Enhancements
+
+If you need more advanced features later:
+
+1. **Database Integration** - Add PostgreSQL or MongoDB
+2. **Google Sheets Integration** - Store data in a spreadsheet
+3. **Automated Reminders** - Add a cron job service
+4. **Analytics Dashboard** - Track RSVP statistics
+5. **Admin Panel** - Manage RSVPs from a web interface
+
+The current email-only solution is perfect for most wedding use cases and can be enhanced later if needed.
