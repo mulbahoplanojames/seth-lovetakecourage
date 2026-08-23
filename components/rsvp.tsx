@@ -11,40 +11,135 @@ export function Rsvp() {
     phone: "",
     attending: "",
     message: "",
-    website: "", // honeypot
+    confirm_email: "", // honeypot
   });
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+
+  const validateField = (name: string, value: string) => {
+    const errors: { [key: string]: string } = {};
+
+    switch (name) {
+      case "name":
+        if (!value.trim()) {
+          errors.name = "Please enter your full name";
+        } else if (value.trim().length < 2) {
+          errors.name = "Name must be at least 2 characters";
+        }
+        break;
+      case "email":
+        if (!value.trim()) {
+          errors.email = "Please enter your email address";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errors.email = "Please enter a valid email address";
+        }
+        break;
+      case "attending":
+        if (!value) {
+          errors.attending = "Please select your attendance status";
+        }
+        break;
+      default:
+        break;
+    }
+
+    return errors;
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Validate field on change if it's been touched
+    if (touched[name]) {
+      const errors = validateField(name, value);
+      setFieldErrors((prev) => ({ ...prev, ...errors }));
+    }
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+
+    const errors = validateField(name, value);
+    setFieldErrors((prev) => ({ ...prev, ...errors }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // console.log("=== Form Submit Button Clicked ===");
+    // console.log("Form data:", formData);
+
+    // Mark all fields as touched
+    setTouched({
+      name: true,
+      email: true,
+      attending: true,
+    });
+
+    // Validate all fields
+    const nameErrors = validateField("name", formData.name);
+    const emailErrors = validateField("email", formData.email);
+    const attendingErrors = validateField("attending", formData.attending);
+
+    const allErrors = {
+      ...nameErrors,
+      ...emailErrors,
+      ...attendingErrors,
+    };
+
+    setFieldErrors(allErrors);
 
     // Honeypot check
-    if (formData.website) {
+    if (formData.confirm_email) {
+      // console.log("Honeypot triggered - bot detected");
       setStatus("success");
       return;
     }
 
-    if (!formData.name.trim() || !formData.email.trim() || !formData.attending) {
-      setErrorMessage("Please complete all required fields.");
+    // Check if there are any errors
+    if (Object.keys(allErrors).length > 0) {
+      // console.log("Validation errors:", allErrors);
+      setErrorMessage("Please fix the errors above before submitting.");
       setStatus("error");
       return;
     }
 
     setStatus("submitting");
     setErrorMessage("");
+    // console.log("Starting API call to /api/rsvp");
 
-    // Simulate reliable submission
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setStatus("success");
+    try {
+      const response = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      // console.log("API response status:", response.status);
+      const result = await response.json();
+      // console.log("API response:", result);
+
+      if (response.ok) {
+        setStatus("success");
+      } else {
+        setErrorMessage(result.error || "Failed to submit RSVP. Please try again.");
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error("API call error:", error);
+      setErrorMessage("Failed to submit RSVP. Please try again.");
+      setStatus("error");
+    }
   };
 
   const resetForm = () => {
@@ -54,9 +149,12 @@ export function Rsvp() {
       phone: "",
       attending: "",
       message: "",
-      website: "",
+      confirm_email: "",
     });
     setStatus("idle");
+    setFieldErrors({});
+    setTouched({});
+    setErrorMessage("");
   };
 
   return (
@@ -108,22 +206,23 @@ export function Rsvp() {
           noValidate
         >
           {/* Honeypot field for bot protection */}
-          <div className="absolute -left-[9999px]" aria-hidden="true">
-            <label htmlFor="website">Website</label>
+          <div className="absolute -left-[9999px]" aria-hidden="true" style={{ opacity: 0, position: 'absolute', top: 0, left: -9999 }}>
+            <label htmlFor="confirm_email" style={{ display: 'none' }}>Confirm Email</label>
             <input
-              id="website"
+              id="confirm_email"
               type="text"
               tabIndex={-1}
               autoComplete="off"
-              name="website"
-              value={formData.website}
+              name="confirm_email"
+              value={formData.confirm_email}
               onChange={handleChange}
+              style={{ opacity: 0, position: 'absolute', top: 0, left: -9999 }}
             />
           </div>
 
           {/* Full Name */}
           <div className="relative group">
-            <label htmlFor="name" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
+            <label htmlFor="name" className={`block mb-3 text-[0.6rem] uppercase tracking-[0.32em] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520] ${fieldErrors.name && touched.name ? "text-red-600" : "text-[#7b6f66]"}`}>
               Full Name<span className="sr-only"> (required)</span>
             </label>
             <input
@@ -135,13 +234,17 @@ export function Rsvp() {
               placeholder="e.g. Astride Umutesi"
               value={formData.name}
               onChange={handleChange}
-              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
+              onBlur={handleBlur}
+              className={`border-b w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] ${fieldErrors.name && touched.name ? "border-red-500 focus:border-red-500" : "border-[#e3d9cc] focus:border-b-[#2b2520]"}`}
             />
+            {fieldErrors.name && touched.name && (
+              <p className="mt-2 text-xs text-red-600">{fieldErrors.name}</p>
+            )}
           </div>
 
           {/* Email Address */}
           <div className="relative group">
-            <label htmlFor="email" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
+            <label htmlFor="email" className={`block mb-3 text-[0.6rem] uppercase tracking-[0.32em] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520] ${fieldErrors.email && touched.email ? "text-red-600" : "text-[#7b6f66]"}`}>
               Email Address<span className="sr-only"> (required)</span>
             </label>
             <input
@@ -153,8 +256,12 @@ export function Rsvp() {
               placeholder="e.g. name@domain.com"
               value={formData.email}
               onChange={handleChange}
-              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
+              onBlur={handleBlur}
+              className={`border-b w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] ${fieldErrors.email && touched.email ? "border-red-500 focus:border-red-500" : "border-[#e3d9cc] focus:border-b-[#2b2520]"}`}
             />
+            {fieldErrors.email && touched.email && (
+              <p className="mt-2 text-xs text-red-600">{fieldErrors.email}</p>
+            )}
           </div>
 
           {/* Phone Number */}
@@ -170,14 +277,14 @@ export function Rsvp() {
               placeholder="+250 ..."
               value={formData.phone}
               onChange={handleChange}
-              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
+              className="border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)]"
             />
           </div>
 
           {/* Attendance */}
           <div className="grid gap-10 sm:grid-cols-2">
             <div className="relative group">
-              <label htmlFor="attending" className="block mb-3 text-[0.6rem] uppercase tracking-[0.32em] text-[#7b6f66] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520]">
+              <label htmlFor="attending" className={`block mb-3 text-[0.6rem] uppercase tracking-[0.32em] transition-colors duration-[350ms] ease-out group-focus-within:text-[#2b2520] ${fieldErrors.attending && touched.attending ? "text-red-600" : "text-[#7b6f66]"}`}>
                 Attendance<span className="sr-only"> (required)</span>
               </label>
               <select
@@ -186,7 +293,8 @@ export function Rsvp() {
                 required
                 value={formData.attending}
                 onChange={handleChange}
-                className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] cursor-pointer appearance-none"
+                onBlur={handleBlur}
+                className={`border-b w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] cursor-pointer appearance-none ${fieldErrors.attending && touched.attending ? "border-red-500 focus:border-red-500" : "border-[#e3d9cc] focus:border-b-[#2b2520]"}`}
                 style={{
                   backgroundImage: 'linear-gradient(45deg, transparent 50%, var(--taupe) 50%), linear-gradient(135deg, var(--taupe) 50%, transparent 50%)',
                   backgroundPosition: 'calc(100% - 18px) calc(50% + 2px), calc(100% - 12px) calc(50% + 2px)',
@@ -200,6 +308,9 @@ export function Rsvp() {
                 <option value="yes">Joyfully attending</option>
                 <option value="no">Regretfully declining</option>
               </select>
+              {fieldErrors.attending && touched.attending && (
+                <p className="mt-2 text-xs text-red-600">{fieldErrors.attending}</p>
+              )}
             </div>
           </div>
 
@@ -215,7 +326,7 @@ export function Rsvp() {
               placeholder={weddingData.rsvp.messagePrompt}
               value={formData.message}
               onChange={handleChange}
-              className="border-none border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] resize-y min-h-[5rem] leading-[1.7]"
+              className="border-b border-[#e3d9cc] w-full text-[#2b2520] bg-transparent outline-none py-[0.85rem] text-base font-light transition-border-color duration-[400ms] ease-out transition-box-shadow duration-[400ms] ease-out transition-transform duration-[400ms] ease-out placeholder:text-[#ada29a] placeholder:italic placeholder:font-serif focus:border-b-[#2b2520] focus:-translate-y-px focus:shadow-[0_1px_rgba(123,111,102,0.15)] resize-y min-h-[5rem] leading-[1.7]"
             />
           </div>
 
