@@ -1,37 +1,85 @@
-import { Geist, Geist_Mono, Noto_Serif, Lora } from "next/font/google"
+import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, Inter, JetBrains_Mono, Great_Vibes } from "next/font/google";
+import "./globals.css";
 
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
-
-const loraHeading = Lora({subsets:['latin'],variable:'--font-heading'});
-
-const notoSerif = Noto_Serif({subsets:['latin'],variable:'--font-serif'});
-
-const fontSans = Geist({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-sans",
-})
+  display: "swap",
+});
 
-const fontMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
+  weight: ["400", "500"],
   variable: "--font-mono",
-})
+  display: "swap",
+});
+
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-script",
+  display: "swap",
+});
+
+export const viewport: Viewport = {
+  themeColor: "#f5ede0",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://lovetakescourage.com"),
+  title: "Courage & Astride | Wedding",
+  description:
+    "Join Courage & Astride for a weekend of celebration in Kigali, Rwanda — schedule, travel, registry, and RSVP.",
+  openGraph: {
+    title: "Courage & Astride · A Kigali Wedding",
+    description: "August 17, 2026 — celebrate with us at Jalia Hall.",
+    type: "website",
+    url: "https://lovetakescourage.com",
+    images: [
+      {
+        url: "/assets/hero-couple-D5jhPesi.jpg",
+        width: 1200,
+        height: 800,
+        alt: "Courage & Astride",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Courage & Astride · A Kigali Wedding",
+    description: "August 17, 2026 — celebrate with us at Jalia Hall.",
+  },
+  icons: {
+    icon: "/assets/calogo-DM4dD7gd.png",
+    apple: "/assets/calogo-DM4dD7gd.png",
+  },
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, fontMono.variable, "font-serif", notoSerif.variable, loraHeading.variable)}
+      className={`${cormorant.variable} ${inter.variable} ${jetbrainsMono.variable} ${greatVibes.variable}`}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="bg-[#fdfaf4] text-[#2b2520] font-sans antialiased selection:bg-[#ccb89c]/30">
+        {children}
       </body>
     </html>
-  )
+  );
 }
