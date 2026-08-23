@@ -95,7 +95,7 @@ export function Hero() {
         </div>
 
         {/* Names headline */}
-        <h1 className="mt-6 font-serif text-5xl leading-[1.05] tracking-[0.08em] uppercase sm:text-7xl lg:text-[6.5rem]">
+        <h1 className="mt-6 font-serif text-5xl leading-[1.05] tracking-[0.08em] uppercase sm:text-7xl lg:text-[6rem]">
           {weddingData.couple.partnerOne} &amp; {weddingData.couple.partnerTwo}
         </h1>
 

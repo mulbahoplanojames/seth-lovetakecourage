@@ -24,7 +24,7 @@ export function Schedule() {
       </motion.div>
 
       {/* Centered Schedule Cards */}
-      <div className="mx-auto grid w-full max-w-3xl gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 shadow-soft rounded-sm">
+      <div className="mx-auto grid w-full max-w-5xl gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 md:grid-cols-3 shadow-soft rounded-sm">
         {weddingData.schedule.map((item, idx) => (
           <motion.article
             key={item.title}

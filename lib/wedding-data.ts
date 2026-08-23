@@ -117,10 +117,10 @@ export interface WeddingConfig {
 
 export const weddingData: WeddingConfig = {
   couple: {
-    partnerOne: "Courage",
-    partnerTwo: "Astride",
-    hashtag: "#lovetakescourage",
-    monogramUrl: "/assets/calogo-DM4dD7gd.png",
+    partnerOne: "NYIAWUMUNTU",
+    partnerTwo: "Seth",
+    hashtag: "#lovetakesnyiawumuntu",
+    monogramUrl: "/assets/logo-main.png",
   },
   eventDate: {
     targetIso: "2026-10-24T14:30:00+02:00",
@@ -196,16 +196,22 @@ export const weddingData: WeddingConfig = {
   ],
   schedule: [
     {
-      day: "Monday, 17 August",
-      time: "2:30 PM",
+      day: "Monday, 24 October",
+      time: "9:00 AM",
+      title: "Introduction and dowry presentation",
+      location: "Hall of FAWE GISOZI",
+    },
+     {
+      day: "Monday, 24 October",
+      time: "02:00 PM",
       title: "Church Ceremony",
-      location: "Jalia Garden",
+      location: "Paroisse Cathorique Sainte Famille",
     },
     {
-      day: "Monday, 17 August",
-      time: "5:30 PM",
+      day: "Monday, 24 October",
+      time: "4:30 PM",
       title: "Reception",
-      location: "Jalia Hall",
+      location: "Hall of FAWE GISOZI",
     },
   ],
   venue: {

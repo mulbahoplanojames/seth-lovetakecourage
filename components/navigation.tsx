@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { weddingData } from "@/lib/wedding-data";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { href: "#home", label: "Home" },
@@ -52,8 +53,8 @@ export function Navigation() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${isScrolled
-        ? "bg-[#fdfaf4]/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.03)] py-6.5"
-        : "bg-transparent py-6.5"
+        ? "bg-[#fdfaf4]/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:py-6.5 py-3.5"
+        : "bg-transparent md:py-6.5 py-3.5"
         }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-10">
@@ -97,16 +98,13 @@ export function Navigation() {
           type="button"
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden flex h-9 w-9 flex-col items-center justify-center gap-1.5 focus:outline-none"
+          className="lg:hidden flex h-9 w-9 items-center justify-center focus:outline-none"
         >
-          <span
-            className={`block h-px w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? "translate-y-[4px] rotate-45" : ""
-              }`}
-          />
-          <span
-            className={`block h-px w-5 bg-foreground transition-all duration-300 ${mobileMenuOpen ? "-translate-y-[3px] -rotate-45" : ""
-              }`}
-          />
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5 text-foreground" />
+          ) : (
+            <Menu className="h-5 w-5 text-foreground" />
+          )}
         </button>
       </div>
 

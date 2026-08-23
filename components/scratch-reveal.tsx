@@ -223,18 +223,17 @@ function ScratchCircle({ value, label, onComplete }: ScratchCircleProps) {
 }
 
 // Confetti shower canvas
-function ConfettiCanvas({ active }: { active: boolean }) {
+function ConfettiCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    if (!active) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let width = window.innerWidth;
-    let height = window.innerHeight;
+    let height = window.innerHeight; // Full page height
     canvas.width = width;
     canvas.height = height;
 
@@ -247,40 +246,38 @@ function ConfettiCanvas({ active }: { active: boolean }) {
     window.addEventListener("resize", handleResize);
 
     const colors = ["#ccb89c", "#805f44", "#eedbc1", "#6a704c", "#5d250f", "#fdfaf4"];
-    const particles = Array.from({ length: 75 }, () => ({
+    
+    // Function to respawn particles
+    const respawnParticle = () => ({
       x: Math.random() * width,
-      y: -20 - Math.random() * 80,
-      vx: (Math.random() - 0.5) * 2.5,
-      vy: Math.random() * 2.5 + 1.8,
+      y: -20 - Math.random() * 50,
+      vx: (Math.random() - 0.5) * 2,
+      vy: Math.random() * 2 + 1,
       rotation: Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.08,
       size: Math.random() * 7 + 4,
       color: colors[Math.floor(Math.random() * colors.length)],
       opacity: Math.random() * 0.7 + 0.3,
-    }));
+    });
 
-    let animId: number;
-    let startTime: number | null = null;
-    const duration = 5000;
+    let particles = Array.from({ length: 75 }, respawnParticle);
 
-    const render = (time: number) => {
-      if (!startTime) startTime = time;
-      const elapsed = time - startTime;
-      if (elapsed >= duration) {
-        ctx.clearRect(0, 0, width, height);
-        return;
-      }
-
+    const render = () => {
       ctx.clearRect(0, 0, width, height);
-      for (const p of particles) {
+      
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
         p.rotation += p.rotSpeed;
 
-        if (p.y > height + 20) continue;
+        // Respawn particle when it goes off screen
+        if (p.y > height + 20) {
+          particles[i] = respawnParticle();
+        }
 
         ctx.save();
-        ctx.globalAlpha = p.opacity * (1 - elapsed / duration);
+        ctx.globalAlpha = p.opacity;
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rotation);
         ctx.fillStyle = p.color;
@@ -288,23 +285,21 @@ function ConfettiCanvas({ active }: { active: boolean }) {
         ctx.restore();
       }
 
-      animId = requestAnimationFrame(render);
+      requestAnimationFrame(render);
     };
 
-    animId = requestAnimationFrame(render);
+    const animId = requestAnimationFrame(render);
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
     };
-  }, [active]);
-
-  if (!active) return null;
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none z-50 h-full w-full"
+      className="fixed inset-0 pointer-events-none z-50"
     />
   );
 }
@@ -322,7 +317,7 @@ export function ScratchReveal() {
       id="date-reveal"
       className="scroll-mt-24 w-full px-6 py-36 text-center sm:py-48 lg:py-56 flex flex-col items-center justify-center"
     >
-      <ConfettiCanvas active={isAllRevealed} />
+      <ConfettiCanvas />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}

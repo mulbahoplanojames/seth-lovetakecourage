@@ -38,32 +38,32 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lovetakescourage.com"),
-  title: "Courage & Astride | Wedding",
+  metadataBase: new URL("https://lovetakesnyiawumuntu.com"),
+  title: "NYIAWUMUNTU & Seth | Wedding",
   description:
-    "Join Courage & Astride for a weekend of celebration in Kigali, Rwanda — schedule, travel, registry, and RSVP.",
+    "Join NYIAWUMUNTU & Seth for a weekend of celebration in Kigali, Rwanda — schedule, travel, registry, and RSVP.",
+  icons: {
+    icon: "/assets/logo-main.png",
+    apple: "/assets/logo-main.png",
+  },
   openGraph: {
-    title: "Courage & Astride · A Kigali Wedding",
-    description: "August 17, 2026 — celebrate with us at Jalia Hall.",
+    title: "NYIAWUMUNTU & Seth · A Kigali Wedding",
+    description: "October 24, 2026 — celebrate with us at Jalia Hall.",
     type: "website",
-    url: "https://lovetakescourage.com",
+    url: "https://lovetakesnyiawumuntu.com",
     images: [
       {
         url: "/assets/hero-couple-D5jhPesi.jpg",
         width: 1200,
         height: 800,
-        alt: "Courage & Astride",
+        alt: "NYIAWUMUNTU & Seth",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Courage & Astride · A Kigali Wedding",
-    description: "August 17, 2026 — celebrate with us at Jalia Hall.",
-  },
-  icons: {
-    icon: "/assets/calogo-DM4dD7gd.png",
-    apple: "/assets/calogo-DM4dD7gd.png",
+    title: "NYIAWUMUNTU & Seth · A Kigali Wedding",
+    description: "October 24, 2026 — celebrate with us at Jalia Hall.",
   },
 };
 
